@@ -55,7 +55,7 @@ impl FromStr for KvPair {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split = s.split("=");
+        let mut split = s.split('=');
         let err = || anyhow!(format!("Failed to parse {}", s));
         Ok(Self {
             k: (split.next().ok_or_else(err)?).to_string(),
@@ -65,6 +65,7 @@ impl FromStr for KvPair {
 }
 
 /// we can get KvPair via s.parse(), because KvPair struct has `FromStr` trait implemented
+#[allow(clippy::needless_question_mark)]
 fn parse_kv_pair(s: &str) -> Result<KvPair> {
     Ok(s.parse()?)
 }
