@@ -12,6 +12,26 @@ use syntect::{
     util::{as_24_bit_terminal_escaped, LinesWithEndings},
 };
 
+#[tokio::main]
+async fn main() -> Result<()> {
+    let opts = Opts::parse();
+    // println!("{:#?}", opts);
+
+    let mut headers = header::HeaderMap::new();
+    headers.insert("X-Powered-By", "Rust".parse()?);
+    headers.insert(header::USER_AGENT, "Rust Httpie".parse()?);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()?;
+    let result = match opts.subcmd {
+        SubCommand::Get(ref args) => get(client, args).await?,
+        SubCommand::Post(ref args) => post(client, args).await?,
+    };
+
+    Ok(result)
+}
+
 #[derive(Parser, Debug)]
 #[clap(version = "1.0", author = "ttyS3 <ttys3@example.com>")]
 struct Opts {
@@ -132,26 +152,6 @@ fn print_syntect(s: &str, ext: &str) {
         let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
         print!("{}", escaped);
     }
-}
-
-#[tokio::main]
-async fn main() -> Result<()> {
-    let opts = Opts::parse();
-    // println!("{:#?}", opts);
-
-    let mut headers = header::HeaderMap::new();
-    headers.insert("X-Powered-By", "Rust".parse()?);
-    headers.insert(header::USER_AGENT, "Rust Httpie".parse()?);
-
-    let client = reqwest::Client::builder()
-        .default_headers(headers)
-        .build()?;
-    let result = match opts.subcmd {
-        SubCommand::Get(ref args) => get(client, args).await?,
-        SubCommand::Post(ref args) => post(client, args).await?,
-    };
-
-    Ok(result)
 }
 
 #[cfg(test)]
