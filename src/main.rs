@@ -64,7 +64,7 @@ fn parse_url(s: &str) -> Result<String> {
     Ok(s.into())
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct KvPair {
     k: String,
     v: String,
